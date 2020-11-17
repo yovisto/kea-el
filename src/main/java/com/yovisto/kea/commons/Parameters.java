@@ -15,7 +15,7 @@ public class Parameters extends XMLConfiguration{
 	public static final String NO_TOKENIZING = "noTokenizing";
 	public static final String SCORERS = "scorers";
 	public static final String NUM_SHINGLES_FILTER = "numberOfShinglesFilter";
-	public static String DATA_PATH;
+	public static final String DATA_PATH = "dataPath";
 
 	
 	private HashSet<String> additionalLinks ;
