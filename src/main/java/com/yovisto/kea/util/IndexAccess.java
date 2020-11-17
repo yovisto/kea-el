@@ -8,10 +8,6 @@ import com.yovisto.kea.commons.Parameters;
 
 public interface IndexAccess {
 
-	public abstract int getLinkCount(String uri, List<String> uris);
-
-	public abstract int getIndegree(String uri);
-
 	public abstract List<String> getIrisForLabel(String surfaceForm);
 
 	public abstract void setup(Parameters params);

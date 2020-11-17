@@ -43,31 +43,21 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.util.Version;
 
+import com.yovisto.kea.ParameterPresets;
 import com.yovisto.kea.commons.Parameters;
 
 public class IndexAccessImpl implements IndexAccess {
 
 	protected final Logger L = Logger.getLogger(getClass());
 	
-	private static String LINKS_INDEX = "/var/indizes/ner-data/lucene2020/links";
-	private static String LABEL_INDEX = "/var/indizes/ner-data/lucene2020/labels";
+	private static String LINKS_INDEX = "/var/indices/lucene/links";
+	private static String LABEL_INDEX = "/var/indices/lucene/labels";
 
 	private IndexReader linksReader = null;
 	private IndexSearcher linksSearcher = null;
 	private IndexReader labelsReader = null;
 	private IndexSearcher labelsSearcher = null;
 
-	@Override
-	public int getLinkCount(String uri, List<String> uris) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getIndegree(String uri) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	private Map<String, String> trainedSurfaces = null;
 
@@ -324,9 +314,8 @@ public class IndexAccessImpl implements IndexAccess {
 				writer.close();
 		}
 	}
-	
-	@SuppressWarnings("unused")
-	private void indexLabels() throws IOException {
+		
+	public void indexLabels() throws IOException {
 		Directory dir = FSDirectory.open(new File(LABEL_INDEX));
 		Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_45);
 		IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_45, analyzer);
@@ -346,7 +335,7 @@ public class IndexAccessImpl implements IndexAccess {
 			while ((strLine = br.readLine()) != null) {
 				if (strLine.length() >= 2 && !strLine.startsWith(" ") && !strLine.startsWith("#")) {
 
-					// wenn pipe: splitte an pipe: rechts-> label links->entity
+					// wenn pipe: splitte an leerzeichen: rechts-> label links->entity
 					// wenn im entity hash vorhanden: splitte -> links = entity
 					// ansonsten: label = entity (mainlabel)
 					strLine = StringEscapeUtils.unescapeHtml(strLine);
@@ -432,7 +421,9 @@ public class IndexAccessImpl implements IndexAccess {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		// indexLinks();
-		// indexLabels();
+		IndexAccessImpl i = new IndexAccessImpl();
+		i.setup(ParameterPresets.getDefaultParameters());		
+		//i.indexLinks();		
+		i.indexLabels();		
 	}
 }
