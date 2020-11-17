@@ -1,6 +1,9 @@
 package com.yovisto.kea.ned;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,14 +25,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
+import com.yovisto.kea.commons.Candidate;
+import com.yovisto.kea.commons.CandidateImpl;
 import com.yovisto.kea.commons.Context;
 import com.yovisto.kea.commons.ContextImpl;
 import com.yovisto.kea.commons.Lang;
 import com.yovisto.kea.commons.MappedTerm;
 import com.yovisto.kea.commons.Parameters;
 import com.yovisto.kea.commons.Term;
-import com.yovisto.kea.commons.Candidate;
-import com.yovisto.kea.commons.CandidateImpl;
 import com.yovisto.kea.commons.Word;
 import com.yovisto.kea.ner.StandardStopListProvider;
 import com.yovisto.kea.util.IndexAccess;
@@ -90,13 +93,15 @@ public class StandardGraphGenerator implements GraphGenerator, Serializable {
 		for (MappedTerm t : mappedTerms) {
 
 			Set<Integer> vertices = new TreeSet<Integer>();
-			if (!termToId.containsKey(t.getSurfaceForm().toLowerCase())) {
+			if (!termToId.containsKey(t.getSurfaceForm())) {
 				int currentNodeId = runningNodeId++;
 
 				// add to the indexes
 				termIds.add(currentNodeId);
-				termToId.put(t.getSurfaceForm().toLowerCase(), currentNodeId);
-				idToTerm.put(currentNodeId, t.getSurfaceForm().toLowerCase());
+				//termToId.put(t.getSurfaceForm().toLowerCase(), currentNodeId);
+				//idToTerm.put(currentNodeId, t.getSurfaceForm().toLowerCase());
+				termToId.put(t.getSurfaceForm(), currentNodeId);
+				idToTerm.put(currentNodeId, t.getSurfaceForm());
 
 				// add to grph
 				g.addVertex(currentNodeId);
@@ -289,7 +294,7 @@ public class StandardGraphGenerator implements GraphGenerator, Serializable {
 				for (Term t : termVertices.keySet()) {
 					for (Integer i : termVertices.get(t)) {
 						if (i == v) {
-							term = t.getSurfaceForm().toLowerCase();
+							term = t.getSurfaceForm();
 							numTerms++;
 						}
 					}
@@ -387,7 +392,7 @@ public class StandardGraphGenerator implements GraphGenerator, Serializable {
 			if (maxUnpures.size() > 1) {
 				//L.info("term: " + idToTerm.get(term));
 				for (int i : maxUnpures) {
-					double similarity = JaroWinklerDistance.similarity(idToTerm.get(term).toLowerCase(), idToUri.get(i).toLowerCase());
+					double similarity = JaroWinklerDistance.similarity(idToTerm.get(term), idToUri.get(i));
 					double factor = Math.round(similarity * 100);
 					//L.info("to further disambiguate: " + i + " " + idToUri.get(i) + " v:" + values.get(i) + " m1:" + max1 + " string dist: " + factor + " = " + (values.get(i) + factor));
 					double newWeight = values.get(i) + factor;
@@ -428,17 +433,18 @@ public class StandardGraphGenerator implements GraphGenerator, Serializable {
 			cnt++;
 		}
 
-		//PrintWriter writer = null;
-		//try {
-		//	writer = new PrintWriter("graph.dot", "UTF-8");
-		//} catch (FileNotFoundException e1) {
-		//	e1.printStackTrace();
-		//} catch (UnsupportedEncodingException e1) {
-		//	e1.printStackTrace();
-		//}
-		//L.info("wrote: graph.dot");
-		//writer.write(componentGraph.toDot());
-		//writer.close();
+		
+//		PrintWriter writer = null;
+//		try {
+//			writer = new PrintWriter("graph.dot", "UTF-8");
+//		} catch (FileNotFoundException e1) {
+//			e1.printStackTrace();
+//		} catch (UnsupportedEncodingException e1) {
+//			e1.printStackTrace();
+//		}
+//		L.info("wrote: graph.dot");
+//		writer.write(componentGraph.toDot());
+//		writer.close();
 
 		Context context = new ContextImpl();
 		context.setTerms(mappedTerms);
@@ -469,7 +475,7 @@ public class StandardGraphGenerator implements GraphGenerator, Serializable {
 		for (Term t : termVertices.keySet()) {
 			for (Integer i : termVertices.get(t)) {
 				if (i.intValue() == v.intValue()) {
-					term = t.getSurfaceForm().toLowerCase();
+					term = t.getSurfaceForm();
 				}
 			}
 		}
