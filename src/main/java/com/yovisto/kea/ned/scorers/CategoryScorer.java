@@ -109,13 +109,13 @@ public class CategoryScorer extends AbstractScorer {
 						if (l2.startsWith("Kategorie")) {
 							uri.getCategories().add(l2);
 
-							List<String> links3 = access.getLinks(l2);
-							for (String l3 : links3) {
-								if (l3.startsWith("Kategorie")) {
-									uri.getCategories().add(l3);
+							//List<String> links3 = access.getLinks(l2);
+							//for (String l3 : links3) {
+							//	if (l3.startsWith("Kategorie")) {
+							//		uri.getCategories().add(l3);
 
-								}
-							}
+							//	}
+							//}
 
 						}
 					}

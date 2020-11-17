@@ -48,13 +48,13 @@ public class CategoryFilterImpl implements CategoryFilter {
 
 								tcats.add(l2);
 
-								List<String> links3 = access.getLinks(l2);
-								for (String l3 : links3) {
-									if (l3.startsWith("Kategorie")) {
+								//List<String> links3 = access.getLinks(l2);
+								//for (String l3 : links3) {
+								//	if (l3.startsWith("Kategorie")) {
 
-										tcats.add(l3);
-									}
-								}
+								//		tcats.add(l3);
+								//	}
+								//}
 							}
 						}
 					}
@@ -64,10 +64,10 @@ public class CategoryFilterImpl implements CategoryFilter {
 				tcats.addAll(t.getCandidate().getCategories());
 			}
 			cats.put(t, tcats);
-			L.info(t.getCandidate().getIri() + " " + tcats.size());
-			for (String cat : tcats) {
-				L.info("  " + cat);
-			}
+			//L.info(t.getCandidate().getIri() + " " + tcats.size());
+			//for (String cat : tcats) {
+			//	L.info("  " + cat);
+			//}
 		}
 
 		//L.info(cats);
