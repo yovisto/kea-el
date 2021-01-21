@@ -69,8 +69,8 @@
 			<groupId>org.sonatype.sisu</groupId>
 			<artifactId>sisu-guice</artifactId>
 			<version>3.1.1</version>
-		</dependency>
-		<dependency>
+		</dependency> 
+			<dependency>
 			<groupId>stanford-ner</groupId>
 			<artifactId>stanford-ner</artifactId>
 			<version>1.2.6</version>			
