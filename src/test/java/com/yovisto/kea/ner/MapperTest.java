@@ -26,6 +26,8 @@ public class MapperTest {
 		Assert.assertEquals(r1, r3);
 		Assert.assertEquals(r1, r4);
 		
+		System.out.println( StringUtils.join( l.getIrisForLabel("bora,_katharina_von") , " ") );
+		
 	}
 
 }

@@ -49,7 +49,7 @@ import com.yovisto.kea.commons.Parameters;
 public class IndexAccessImpl implements IndexAccess {
 
 	protected final Logger L = Logger.getLogger(getClass());
-	
+
 	private static String LINKS_INDEX = "/var/indices/lucene/links";
 	private static String LABEL_INDEX = "/var/indices/lucene/labels";
 
@@ -58,6 +58,7 @@ public class IndexAccessImpl implements IndexAccess {
 	private IndexReader labelsReader = null;
 	private IndexSearcher labelsSearcher = null;
 
+	private static final String CLEAN_PATTERN = "[^a-zA-Z_öäüßÖÄÜéèÈÉ0-9\\s\\-]+";
 
 	private Map<String, String> trainedSurfaces = null;
 
@@ -83,7 +84,8 @@ public class IndexAccessImpl implements IndexAccess {
 	@Override
 	public List<String> getIrisForLabel(String surfaceForm) {
 
-		List<String> result = new ArrayList<String>(searchIRIsForLabel(surfaceForm.toLowerCase().replace(" ", "_")));
+		List<String> result = new ArrayList<String>(
+				searchIRIsForLabel(surfaceForm.toLowerCase().replace(" ", "_").replaceAll(CLEAN_PATTERN, "")));
 
 		if (trainedSurfaces != null && trainedSurfaces.containsKey(surfaceForm.toLowerCase())) {
 			String uri = trainedSurfaces.get(surfaceForm.toLowerCase());
@@ -93,23 +95,26 @@ public class IndexAccessImpl implements IndexAccess {
 		return result;
 	}
 
-
-
 	@Override
 	public void setup(Parameters params) {
-		
+		LINKS_INDEX = params.getString(Parameters.DATA_PATH) + "/links";
+		LABEL_INDEX = params.getString(Parameters.DATA_PATH) + "/labels";
+
 		if (linksReader == null) {
-			LINKS_INDEX = params.getString(Parameters.DATA_PATH) + "/links";
-			LABEL_INDEX = params.getString(Parameters.DATA_PATH) + "/labels";
-			
-			//L.info("Setting up lucene access");
+
+			// L.info("Setting up lucene access");
 			try {
-				linksReader = DirectoryReader.open(NIOFSDirectory.open(new File(LINKS_INDEX)));
-				linksSearcher = new IndexSearcher(linksReader);
+				File linksDir = new File(LINKS_INDEX);
+				if (linksDir.exists()) {
+					linksReader = DirectoryReader.open(NIOFSDirectory.open(linksDir));
+					linksSearcher = new IndexSearcher(linksReader);
+				}
 
-				labelsReader = DirectoryReader.open(NIOFSDirectory.open(new File(LABEL_INDEX)));
-				labelsSearcher = new IndexSearcher(labelsReader);
-
+				File labelsDir = new File(LABEL_INDEX);
+				if (labelsDir.exists()) {
+					labelsReader = DirectoryReader.open(NIOFSDirectory.open(new File(LABEL_INDEX)));
+					labelsSearcher = new IndexSearcher(labelsReader);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -131,8 +136,8 @@ public class IndexAccessImpl implements IndexAccess {
 			for (Object obj : additionalLinks) {
 				String line = (String) obj;
 				if (line.split("\t").length == 2) {
-					String from = line.split("\t")[0] ;
-					String to = line.split("\t")[1] ;
+					String from = line.split("\t")[0];
+					String to = line.split("\t")[1];
 
 					if (trainedLinks.containsKey(from)) {
 						trainedLinks.get(from).add(to);
@@ -191,13 +196,10 @@ public class IndexAccessImpl implements IndexAccess {
 		return result;
 	}
 
-	
-
 	private String escape(String uri) {
 		uri = uri.replaceAll("\\\"", "\\\\\"");
 		return uri;
 	}
-
 
 	private Set<String> searchIRIsForLabel(String surfaceForm) {
 		Set<String> result = new TreeSet<String>();
@@ -314,7 +316,7 @@ public class IndexAccessImpl implements IndexAccess {
 				writer.close();
 		}
 	}
-		
+
 	public void indexLabels() throws IOException {
 		Directory dir = FSDirectory.open(new File(LABEL_INDEX));
 		Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_45);
@@ -323,7 +325,7 @@ public class IndexAccessImpl implements IndexAccess {
 		int count = 0;
 		FileInputStream fis = null;
 		try {
-		    // needs to be sorted by IRI !!!
+			// needs to be sorted by IRI !!!
 			// ---> LC_ALL=c sort -u <file>
 			fis = new FileInputStream(LABEL_INDEX + ".txt");
 			DataInputStream in = new DataInputStream(fis);
@@ -363,7 +365,7 @@ public class IndexAccessImpl implements IndexAccess {
 						extra = label.substring(0, label.indexOf("("));
 					}
 
-					label = label.replaceAll("[^a-zA-Z_öäüßÖÄÜéèÈÉ0-9\\s\\-]+", "");
+					label = label.replaceAll(CLEAN_PATTERN, "");
 					if (!iri.trim().equals("") && !label.trim().equals("")) {
 
 						iri = iri.replace(" ", "_");
@@ -373,7 +375,6 @@ public class IndexAccessImpl implements IndexAccess {
 							text = text + " " + extra.toLowerCase().replace(" ", "_");
 						}
 
-		
 						if (!currentDoc.equals(iri)) {
 
 							Document doc = new Document();
@@ -386,7 +387,7 @@ public class IndexAccessImpl implements IndexAccess {
 							currentDoc = iri;
 
 							if (count % 100000 == 0) {
-								L.info(count);								
+								L.info(count);
 							}
 							count++;
 						}
@@ -419,11 +420,14 @@ public class IndexAccessImpl implements IndexAccess {
 
 		}
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		IndexAccessImpl i = new IndexAccessImpl();
-		i.setup(ParameterPresets.getDefaultParameters());		
-		//i.indexLinks();		
-		i.indexLabels();		
+		i.setup(ParameterPresets.getDefaultParameters());
+		System.out.println("Creating links index ...");
+		i.indexLinks();
+		System.out.println("Creating labels index ...");
+		i.indexLabels();
+		System.out.println("Done.");
 	}
 }

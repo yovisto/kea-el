@@ -16,7 +16,7 @@ public class StandardMerger implements MappedTermMerger {
 	protected final Logger L = Logger.getLogger(getClass());
 	
 	private int numShingles;
-	private List<String> nouns = Arrays.asList("NOUN", "CD", "NN", "NNPS", "NNS", "NNP", "NE", "JJ", "VBZ", "VBD", "VBP", "PROPN", "FM", "CARD");
+	private List<String> nouns = Arrays.asList("NOUN", "CD", "NN", "NNPS", "NNS", "NNP", "NE", "JJ", "VBZ", "VBD", "VBP", "PROPN", "FM", "CARD", "APPR");
 	private List<String> mergeNouns = Arrays.asList("NOUN", "NN", "NNPS", "NNS", "NNP", "NE");
 	private List<String> mergeIndicator = Arrays.asList("DT" ,"IN");
 

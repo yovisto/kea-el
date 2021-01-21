@@ -1,5 +1,7 @@
 package com.yovisto.kea;
 
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,7 +14,7 @@ import com.yovisto.kea.guice.KeaModule;
 
 public class EntityResolverTest {
 
-	@Test
+	//@Test
 	public void test() throws Exception {
 
 		Parameters params = ParameterPresets.getDefaultParametersWithExplain();
@@ -23,7 +25,7 @@ public class EntityResolverTest {
 
 		params.setProperty(Parameters.NO_TOKENIZING, true);
 
-		for (DisambiguatedTerm dTerm : resolver.resolve("Armstrong", params)) {
+		for (DisambiguatedTerm dTerm : resolver.resolve("Bora, Katharina von", params)) {
 			System.out.println(dTerm.getSurfaceForm());
 			Assert.assertNotNull(dTerm.getSurfaceForm());
 			Assert.assertNotNull(dTerm.getScoredCandidates());
@@ -41,5 +43,22 @@ public class EntityResolverTest {
 			}
 			System.out.println("->" + dTerm.getCandidate().getIri() + " " + ((ScoredCandidate) dTerm.getCandidate()).getTotalScore());
 		}
+	}
+	
+	@Test
+	public void test2() throws Exception {
+
+		Parameters params = ParameterPresets.getDefaultParametersWithExplain();
+
+		Injector injector = Guice.createInjector(new KeaModule());
+
+		StandardEntityResolver resolver = (StandardEntityResolver)injector.getInstance(EntityResolver.class);
+
+		for (DisambiguatedTerm dTerm : resolver.resolveAsKeywords(Arrays.asList("Berlin", "August Heinrich Hoffmann von Fallersleben", "Bora, Katharina von"), params)) {
+			System.out.println(dTerm.getSurfaceForm());
+			System.out.println("->" + dTerm.getCandidate().getIri() + " " + ((ScoredCandidate) dTerm.getCandidate()).getTotalScore());			
+		}
+		
+		
 	}
 }

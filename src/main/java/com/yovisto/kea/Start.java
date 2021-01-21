@@ -16,11 +16,12 @@ public class Start {
 		EntityResolver resolver = injector.getInstance(EntityResolver.class);
 		Parameters p = ParameterPresets.getDefaultParametersWithExplain();
 
-		List<DisambiguatedTerm> result1 = resolver.resolve("Das Angelina hat in ganz Frankreich die besten Teilchen.", p);
+		List<DisambiguatedTerm> result1 = resolver.resolve("Armstrong landet auf dem Mond.", p);
 
 		for (DisambiguatedTerm term : result1) {
 			System.out.println(term.getSurfaceForm() + " -> " + term.getCandidate().getIri() + " "
 					+ term.getStartOffset() + "-" + term.getEndOffset());
+			System.out.println(term.getCandidate().getCategories());
 		}
 
 		if (result1.size() > 0) {

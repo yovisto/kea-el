@@ -1,5 +1,6 @@
 package com.yovisto.kea;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -121,4 +122,63 @@ public class StandardEntityResolver implements EntityResolver {
 		return filtered;		
 	}
 
+	
+	public List<DisambiguatedTerm> resolveAsKeywords(List<String> text, Parameters params) throws Exception {
+		
+		params.setProperty(Parameters.NO_TOKENIZING, true);
+		params.setProperty(Parameters.NO_MERGING, true);
+		
+		// generate n-grams of tokens
+		L.info("TERM GENERATION");		
+		List<Term> terms = new ArrayList<Term>();
+		for (String t: text){			
+			List<Term> tt = grams.generateGrams(t, params);
+			terms.addAll(tt);
+		}					
+		L.info("Size: " + terms.size());		
+
+		L.info("SHINGLE FILTER");
+		List<Term> shingleFilteredTerms = termFilter.filter(terms, params);
+
+		L.info("Size: " + shingleFilteredTerms.size());
+		
+		// map the ngrams to uri candidates
+		L.info("MAPPING");
+		List<MappedTerm> mappedTerms = mapper.mapAllCandidates(shingleFilteredTerms, params);
+		
+
+		// merge overlapping n-grams
+		L.info("Size: " + mappedTerms.size());
+		//L.info("MERGING");
+		//List<MappedTerm> mergedTerms = merger.merge(mappedTerms, params);
+
+		// filter terms
+		L.info("Size: " + mappedTerms.size());
+		L.info("FILTERING");
+		List<MappedTerm> filteredTerms = filter.filter(mappedTerms, params);
+
+		Context context = graphGenerator.createGraphContext(filteredTerms, params);
+
+		// score the candidates
+		L.info("Size: " + filteredTerms.size());
+		L.info("SCORING");
+		List<ScoredTerm> scoredTerms = scoreGenerator.generateScores(filteredTerms, context, params);
+
+		CategoryScorer.addScore(scoredTerms, params, access);
+
+		// normalize the scores
+		L.info("Size: " + scoredTerms.size());
+		L.info("NORMALIZATION");
+		normalizer.normalize(scoredTerms, params);
+
+		// disambiguate aka chose the winner from the scores
+		L.info("Size: " + scoredTerms.size());
+		L.info("DISAMBIGUATION");
+		List<DisambiguatedTerm> dTerms = disambiguator.disambiguate(scoredTerms, params);
+
+		// final filtering according to category overlap
+		List<DisambiguatedTerm> filtered = catFilter.filter(dTerms);
+
+		return filtered;		
+	}
 }

@@ -18,7 +18,7 @@ public class StandardFilter implements MappedTermFilter {
 
 	private static final long serialVersionUID = 6810042566461347709L;
 
-	public static final List<String> nouns = Arrays.asList("NOUN", "NN", "FM", "NNPS", "NNS", "NNP", "NE", "JJ", "CD", "PROPN"); 	
+	public static final List<String> nouns = Arrays.asList("NOUN", "NN", "FM", "NNPS", "NNS", "NNP", "NE", "JJ", "CD", "PROPN", "APPR"); 	
 	
 	/**
 	 * If a candidate is in this list, the entire term is removed (resp. its cndidate list is emptied)
