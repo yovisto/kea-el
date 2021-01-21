@@ -49,10 +49,12 @@ public class EvaluationTool {
 	
 	public static List<String> testData = Arrays.asList(
 			"<a href='Angelina_Jolie'>Angelina</a> ist mal wieder als <a href='Tomb_Raider'>Tomb Raider</a> unterwegs.",
-			"Das <a href='Angelina_(Café)'>Angelina</a> hat in ganz <a href='Frankreich'>Frankreich</a> die besten <a href='Gebäck'>Teilchen<(a>.", 
+			"Das <a href='Angelina_(Café)'>Angelina</a> hat in ganz <a href='Paris'>Paris</a> die besten <a href='Gebäck'>Teilchen<(a>.", 
 			"<a href='Neil_Armstrong'>Armstrong</a> landet auf dem <a href='Mond'>Mond</a>.",
-			"<a href='Louis_Armstrong'>Armstrong</a> spielt auf der <a href='Jazztrompete'>Trompete</a>.",
+			"<a href='Louis_Armstrong'>Armstrong</a> spielt auf der <a href='Trompete'>Trompete</a>.",
 			"<a href='Rom'>Rom</a> ist die <a href='Hauptstadt'>Hauptstadt</a> von <a href='Italien'>Italien</a>");
+	
+	//public static List<String> testData = Arrays.asList("Bora, Katharina von");
 	
 	
 	
@@ -384,7 +386,7 @@ public class EvaluationTool {
 	public static void main(String[] args) throws Exception {
 		EvaluationTool e = new EvaluationTool();
 		
-		Parameters p = ParameterPresets.getDefaultParameters();
+		Parameters p = ParameterPresets.getDefaultParametersWithExplain();
 		p.setAdditionalLinks(new HashSet<String>(Arrays.asList("Apollo_11\tHarry_S._Truman")));
 		p.setAdditionalSurfaces(new HashSet<String>(Arrays.asList("harry\tHarry_S._Truman")));
 		e.evaluate(p);
