@@ -6,7 +6,7 @@ For a given text, the tool identifies meaningful text framents, and emits a corr
 
 E.G. For the text:
 
-**"Armstrong landet on the moon"**
+**"Armstrong landed on the moon"**
 
 The result might be:
 
