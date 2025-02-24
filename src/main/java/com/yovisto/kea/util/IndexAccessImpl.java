@@ -121,10 +121,10 @@ public class IndexAccessImpl implements IndexAccess {
 					L.error("Setting up lucene labels index failed. Path does not exits: " +  LABEL_INDEX);
 				}
 				if (linksSearcher==null){
-					L.error("Error setting up link searcher, but path exists.";
+					L.error("Error setting up link searcher, but path exists.");
 				}
 				if (labelsSearcher==null){
-					L.error("Error setting up labels searcher, but path exists.";
+					L.error("Error setting up labels searcher, but path exists.");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
