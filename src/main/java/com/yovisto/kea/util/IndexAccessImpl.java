@@ -108,12 +108,17 @@ public class IndexAccessImpl implements IndexAccess {
 				if (linksDir.exists()) {
 					linksReader = DirectoryReader.open(NIOFSDirectory.open(linksDir));
 					linksSearcher = new IndexSearcher(linksReader);
+				}else{
+					L.error("Setting up lucene links index failed. Path does not exits: " +  LINKS_INDEX);
 				}
 
 				File labelsDir = new File(LABEL_INDEX);
 				if (labelsDir.exists()) {
 					labelsReader = DirectoryReader.open(NIOFSDirectory.open(new File(LABEL_INDEX)));
 					labelsSearcher = new IndexSearcher(labelsReader);
+				}
+				else{
+					L.error("Setting up lucene labels index failed. Path does not exits: " +  LABEL_INDEX);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
